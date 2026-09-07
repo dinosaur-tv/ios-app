@@ -1,0 +1,38 @@
+name: DinoHome
+options:
+  bundleIdPrefix: ru.dinotv
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+targets:
+  DinoHome:
+    type: application
+    platform: iOS
+    sources:
+      - path: DinoHome
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ru.dinotv.home
+        PRODUCT_NAME: Dino Home
+        INFOPLIST_FILE: DinoHome/Info.plist
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    scheme:
+      testTargets:
+        - DinoHomeTests
+  DinoHomeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: DinoHomeTests
+    dependencies:
+      - target: DinoHome
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ru.dinotv.home.tests
+        GENERATE_INFOPLIST_FILE: YES
