@@ -27,9 +27,20 @@ struct DinoHomeWebView: UIViewRepresentable {
 
         func webView(_: WKWebView, didFinish _: WKNavigation!) { model.didFinishLoading() }
         func webView(_: WKWebView, didFail _: WKWebView!, withError _: Error) { model.didFailLoading() }
-        func webView(_: WKWebView, didFailProvisionalNavigation _: WKNavigation!, withError _: Error) { model.didFailLoading() }
 
-        func webView(_: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        func webView(
+            _: WKWebView,
+            didFailProvisionalNavigation _: WKNavigation!,
+            withError _: Error
+        ) {
+            model.didFailLoading()
+        }
+
+        func webView(
+            _: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction,
+            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+        ) {
             guard let url = navigationAction.request.url else { decisionHandler(.cancel); return }
             let scheme = url.scheme?.lowercased() ?? ""
             if ["blob", "data", "about", "file"].contains(scheme) {
