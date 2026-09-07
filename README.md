@@ -29,7 +29,7 @@ xcodebuild \
   build
 ```
 
-On macOS, install [XcodeGen](https://github.com/yonaskolb/XcodeGen), [SwiftLint](https://github.com/realm/SwiftLint) and [pre-commit](https://pre-commit.com/), then run:
+On macOS, install [XcodeGen](https://github.com/yonaskolb/XcodeGen), [SwiftLint](https://github.com/realm/SwiftLint) and [pre-commit](https://pre-commit.com/). Коммит проверяет только пробелы и YAML; SwiftLint и тесты гоняет CI.
 
 ```bash
 xcodegen generate
