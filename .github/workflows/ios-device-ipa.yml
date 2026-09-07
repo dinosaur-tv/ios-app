@@ -44,7 +44,9 @@ jobs:
 
       - name: Package IPA
         run: |
-          APP_PATH="$(ls -d DerivedData/Build/Products/Release-iphoneos/*.app)"
+          APP_PATH="DerivedData/Build/Products/Release-iphoneos/DinoHome.app"
+          test -d "$APP_PATH"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_PATH/Info.plist"
           mkdir -p Payload
           cp -R "$APP_PATH" Payload/
           zip -r DinoHome-Device.ipa Payload
