@@ -17,11 +17,13 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ru.dinotv.home
-        PRODUCT_NAME: Dino Home
+        PRODUCT_NAME: DinoHome
+        PRODUCT_MODULE_NAME: DinoHome
         INFOPLIST_FILE: DinoHome/Info.plist
         CODE_SIGN_STYLE: Automatic
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_TESTABILITY: YES
     scheme:
       testTargets:
         - DinoHomeTests
@@ -36,3 +38,5 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ru.dinotv.home.tests
         GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/DinoHome.app/DinoHome"
+        BUNDLE_LOADER: "$(TEST_HOST)"
