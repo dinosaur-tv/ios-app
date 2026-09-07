@@ -15,4 +15,9 @@ jobs:
       - run: brew install xcodegen swiftlint
       - run: xcodegen generate
       - run: swiftlint lint --strict
-      - run: xcodebuild test -project DinoHome.xcodeproj -scheme DinoHome -destination 'platform=iOS Simulator,name=iPhone 16'
+      - name: Build for testing
+        run: xcodebuild build-for-testing -project DinoHome.xcodeproj -scheme DinoHome -destination 'platform=iOS Simulator,name=iPhone 16,arch=arm64' -derivedDataPath DerivedData
+      - name: Verify bundle identifier
+        run: /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' DerivedData/Build/Products/Debug-iphonesimulator/DinoHome.app/Info.plist
+      - name: Test
+        run: xcodebuild test-without-building -project DinoHome.xcodeproj -scheme DinoHome -destination 'platform=iOS Simulator,name=iPhone 16,arch=arm64' -derivedDataPath DerivedData

@@ -5,11 +5,11 @@
     <key>CFBundleDisplayName</key>
     <string>Dino Home</string>
     <key>CFBundleName</key>
-    <string>$(PRODUCT_NAME)</string>
+    <string>DinoHome</string>
     <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <string>ru.dinotv.home</string>
     <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
+    <string>DinoHome</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleDevelopmentRegion</key>
@@ -23,10 +23,7 @@
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>UILaunchScreen</key>
-    <dict>
-        <key>UIColorName</key>
-        <string></string>
-    </dict>
+    <dict/>
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>
