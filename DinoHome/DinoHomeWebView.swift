@@ -9,9 +9,17 @@ struct DinoHomeWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+        configuration.applicationNameForUserAgent = "DinoHome/\(version)"
+        configuration.userContentController.addUserScript(
+            WKUserScript(
+                source: "window.__DINO_NATIVE_IOS__ = true;",
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
+        )
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
-        webView.customUserAgent = "DinoHome/1.0"
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
@@ -25,15 +33,25 @@ struct DinoHomeWebView: UIViewRepresentable {
         private let model: DinoHomeWebModel
         init(model: DinoHomeWebModel) { self.model = model }
 
-        func webView(_: WKWebView, didFinish _: WKNavigation!) { model.didFinishLoading() }
-        func webView(_: WKWebView, didFail _: WKWebView!, withError _: Error) { model.didFailLoading() }
+        func webView(_ webView: WKWebView, didCommit _: WKNavigation!) {
+            guard let url = webView.url, DinoHomeLinks.sanitized(url) == url else { return }
+            model.didFinishLoading()
+        }
+
+        func webView(_: WKWebView, didFinish _: WKNavigation!) {
+            model.didFinishLoading()
+        }
+
+        func webView(_: WKWebView, didFail _: WKNavigation!, withError error: Error) {
+            model.didFailLoading(error: error)
+        }
 
         func webView(
             _: WKWebView,
             didFailProvisionalNavigation _: WKNavigation!,
-            withError _: Error
+            withError error: Error
         ) {
-            model.didFailLoading()
+            model.didFailLoading(error: error)
         }
 
         func webView(
@@ -47,7 +65,14 @@ struct DinoHomeWebView: UIViewRepresentable {
                 decisionHandler(.allow)
                 return
             }
-            if DinoHomeLinks.sanitized(url) == url { decisionHandler(.allow) } else { decisionHandler(.cancel) }
+            if DinoHomeLinks.sanitized(url) == url {
+                decisionHandler(.allow)
+                return
+            }
+            decisionHandler(.cancel)
+            if navigationAction.targetFrame?.isMainFrame != false {
+                model.open(DinoHomeLinks.homeURL)
+            }
         }
     }
 }
