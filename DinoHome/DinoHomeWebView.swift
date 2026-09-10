@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import WebKit
 
 struct DinoHomeWebView: UIViewRepresentable {
@@ -20,6 +21,7 @@ struct DinoHomeWebView: UIViewRepresentable {
         )
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
+        webView.uiDelegate = context.coordinator
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
@@ -29,9 +31,27 @@ struct DinoHomeWebView: UIViewRepresentable {
 
     func updateUIView(_: WKWebView, context _: Context) {}
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         private let model: DinoHomeWebModel
         init(model: DinoHomeWebModel) { self.model = model }
+
+        func webView(
+            _ webView: WKWebView,
+            runJavaScriptConfirmPanelWithMessage message: String,
+            initiatedByFrame frame: WKFrameInfo,
+            completionHandler: @escaping (Bool) -> Void
+        ) {
+            guard frame.isMainFrame, let url = webView.url, DinoHomeLinks.sanitized(url) == url,
+                  var presenter = webView.window?.rootViewController else {
+                completionHandler(false)
+                return
+            }
+            while let presented = presenter.presentedViewController { presenter = presented }
+            let alert = UIAlertController(title: "Dino TV", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Отмена", style: .cancel) { _ in completionHandler(false) })
+            alert.addAction(UIAlertAction(title: "Продолжить", style: .destructive) { _ in completionHandler(true) })
+            presenter.present(alert, animated: true)
+        }
 
         func webView(_ webView: WKWebView, didCommit _: WKNavigation!) {
             guard let url = webView.url, DinoHomeLinks.sanitized(url) == url else { return }
@@ -61,17 +81,13 @@ struct DinoHomeWebView: UIViewRepresentable {
         ) {
             guard let url = navigationAction.request.url else { decisionHandler(.cancel); return }
             let scheme = url.scheme?.lowercased() ?? ""
-            if ["blob", "data", "about", "file"].contains(scheme) {
-                decisionHandler(.allow)
-                return
-            }
             if DinoHomeLinks.sanitized(url) == url {
                 decisionHandler(.allow)
                 return
             }
             decisionHandler(.cancel)
-            if navigationAction.targetFrame?.isMainFrame != false {
-                model.open(DinoHomeLinks.homeURL)
+            if scheme == "https", navigationAction.targetFrame?.isMainFrame != false {
+                UIApplication.shared.open(url)
             }
         }
     }

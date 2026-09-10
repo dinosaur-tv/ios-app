@@ -2,6 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var model: DinoHomeWebModel
+    @AppStorage("dinoServer") private var server = ""
+    @State private var editingServer = false
+    @State private var serverInput = ""
 
     var body: some View {
         ZStack {
@@ -41,6 +44,35 @@ struct ContentView: View {
         }
         .animation(.easeOut(duration: 0.22), value: model.isLoading)
         .animation(.easeOut(duration: 0.22), value: model.showOfflineOverlay)
+        .overlay(alignment: .topTrailing) {
+            Button("Сервер") { serverInput = server; editingServer = true }
+                .padding(12)
+                .foregroundStyle(Color.dinoBrass)
+        }
+        .onAppear {
+            if DinoHomeLinks.serverURL(server) == nil { editingServer = true }
+        }
+        .sheet(isPresented: $editingServer) {
+            NavigationStack {
+                Form {
+                    Section("Ваш сервер Dino TV") {
+                        TextField("https://home.example.com", text: $serverInput)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .keyboardType(.URL)
+                        Text("Первый ТВ подключает владелец из Telegram. Для телефона нужен код из авторизованной консоли.")
+                    }
+                    Button("Подключиться") {
+                        guard let url = DinoHomeLinks.serverURL(serverInput) else { return }
+                        server = url.absoluteString
+                        model.open(url)
+                        editingServer = false
+                    }
+                    .disabled(DinoHomeLinks.serverURL(serverInput) == nil)
+                }
+                .navigationTitle("Подключение")
+            }
+        }
     }
 }
 
