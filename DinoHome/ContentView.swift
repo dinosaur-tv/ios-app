@@ -60,7 +60,10 @@ struct ContentView: View {
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                             .keyboardType(.URL)
-                        Text("Первый ТВ подключает владелец из Telegram. Для телефона нужен код из авторизованной консоли.")
+                        Text(
+                            "Дом создаётся в Telegram-боте. Телевизор привязывается кодом с экрана, "
+                            + "телефон — одноразовым кодом из консоли."
+                        )
                     }
                     Button("Подключиться") {
                         guard let url = DinoHomeLinks.serverURL(serverInput) else { return }
