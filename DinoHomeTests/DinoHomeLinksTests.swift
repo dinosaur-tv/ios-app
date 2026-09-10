@@ -3,7 +3,11 @@ import XCTest
 
 final class DinoHomeLinksTests: XCTestCase {
     func testSelfHostedServerValidation() {
-        XCTAssertEqual(DinoHomeLinks.serverURL("https://home.example.org")?.path, "/console/")
+        // Assert the URL itself: URL.path drops the trailing slash on newer Foundation.
+        XCTAssertEqual(
+            DinoHomeLinks.serverURL("https://home.example.org")?.absoluteString,
+            "https://home.example.org/console/"
+        )
         for input in [
             "http://home.example.org", "https://user:pass@home.example.org",
             "https://home.example.org/?token=x", "file:///tmp/x"
