@@ -18,7 +18,7 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Prepare Homebrew
         run: |
@@ -58,7 +58,7 @@ jobs:
           zip -r DinoHome-Device.ipa Payload
           rm -rf Payload
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: DinoHome-Device
           path: DinoHome-Device.ipa
